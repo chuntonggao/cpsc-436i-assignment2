@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/cpsc-436i-assignment2/static/css/main.539ca75c.chunk.css",
+    "main.js": "/cpsc-436i-assignment2/static/js/main.a4eb2099.chunk.js",
+    "main.js.map": "/cpsc-436i-assignment2/static/js/main.a4eb2099.chunk.js.map",
+    "runtime-main.js": "/cpsc-436i-assignment2/static/js/runtime-main.2dfb1c5b.js",
+    "runtime-main.js.map": "/cpsc-436i-assignment2/static/js/runtime-main.2dfb1c5b.js.map",
+    "static/js/2.e7c2c830.chunk.js": "/cpsc-436i-assignment2/static/js/2.e7c2c830.chunk.js",
+    "static/js/2.e7c2c830.chunk.js.map": "/cpsc-436i-assignment2/static/js/2.e7c2c830.chunk.js.map",
+    "index.html": "/cpsc-436i-assignment2/index.html",
+    "precache-manifest.bfa57dcace89799960353b59561f9c32.js": "/cpsc-436i-assignment2/precache-manifest.bfa57dcace89799960353b59561f9c32.js",
+    "service-worker.js": "/cpsc-436i-assignment2/service-worker.js",
+    "static/css/main.539ca75c.chunk.css.map": "/cpsc-436i-assignment2/static/css/main.539ca75c.chunk.css.map",
+    "static/js/2.e7c2c830.chunk.js.LICENSE.txt": "/cpsc-436i-assignment2/static/js/2.e7c2c830.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.2dfb1c5b.js",
+    "static/js/2.e7c2c830.chunk.js",
+    "static/css/main.539ca75c.chunk.css",
+    "static/js/main.a4eb2099.chunk.js"
+  ]
+}
