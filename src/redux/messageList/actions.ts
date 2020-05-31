@@ -3,10 +3,10 @@ import { v4 as uuid } from 'uuid';
 import {
     AddMessageAction,
     DeleteAllMessagesAction,
-    DeleteMessagesAction,
+    DeleteMessageAction,
     messageListActionTypes,
     ToggleAllMessagesAction,
-    ToggleMessagesAction,
+    ToggleMessageAction,
     UpdateMessageAction,
 } from './types';
 
@@ -16,15 +16,16 @@ export const addMessage = (text: string): AddMessageAction => {
         payload: {
             text: text,
             id: uuid(),
+            createdOn: new Date(),
         },
     };
 };
 
-export const deleteMessages = (ids: Set<string>): DeleteMessagesAction => {
+export const deleteMessage = (id: string): DeleteMessageAction => {
     return {
-        type: messageListActionTypes.DELETE_MESSAGES,
+        type: messageListActionTypes.DELETE_MESSAGE,
         payload: {
-            ids: ids,
+            id: id,
         },
     };
 };
@@ -38,14 +39,18 @@ export const deleteAllMessages = (): DeleteAllMessagesAction => {
 export const toggleAllMessages = (): ToggleAllMessagesAction => {
     return {
         type: messageListActionTypes.TOGGLE_ALL_MESSAGES,
+        payload: {
+            readOn: new Date(),
+        },
     };
 };
 
-export const toggleMessages = (ids: Set<string>): ToggleMessagesAction => {
+export const toggleMessage = (id: string): ToggleMessageAction => {
     return {
-        type: messageListActionTypes.TOGGLE_MESSAGES,
+        type: messageListActionTypes.TOGGLE_MESSAGE,
         payload: {
-            ids: ids,
+            id: id,
+            readOn: new Date(),
         },
     };
 };
@@ -62,6 +67,7 @@ export const updateMessage = ({
         payload: {
             id: id,
             text: text,
+            updatedOn: new Date(),
         },
     };
 };

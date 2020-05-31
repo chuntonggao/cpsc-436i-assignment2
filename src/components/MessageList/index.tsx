@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 
 import {
     deleteAllMessages,
-    deleteMessages,
     toggleAllMessages,
-    toggleMessages,
 } from '../../redux/messageList/actions';
 import { Message } from '../../redux/messageList/types';
 import { RootState } from '../../redux/store';
@@ -13,16 +11,12 @@ import MessageItem from '../MessageItem';
 import NewMessageForm from '../NewMessageForm/';
 
 interface DispatchProps {
-    deleteMessages: typeof deleteMessages;
     deleteAllMessages: typeof deleteAllMessages;
-    toggleMessages: typeof toggleMessages;
     toggleAllMessages: typeof toggleAllMessages;
 }
 
 const mapDispatchToProps = {
-    deleteMessages,
     deleteAllMessages,
-    toggleMessages,
     toggleAllMessages,
 };
 
@@ -65,6 +59,9 @@ class MessageList extends React.Component<MessageListProps, MessageListState> {
                 read={message.read}
                 id={message.id}
                 key={message.id}
+                createdOn={message.createdOn}
+                readOn={message.readOn}
+                updatedOn={message.updatedOn}
             />
         ));
         return (

@@ -2,6 +2,9 @@ export interface Message {
     text: string;
     read: boolean;
     id: string;
+    createdOn: Date;
+    readOn: Date | undefined;
+    updatedOn: Date;
 }
 
 export interface MessageListState {
@@ -10,9 +13,9 @@ export interface MessageListState {
 
 export const messageListActionTypes = {
     ADD_MESSAGE: 'ADD_MESSAGE',
-    DELETE_MESSAGES: 'DELETE_MESSAGES',
+    DELETE_MESSAGE: 'DELETE_MESSAGE',
     DELETE_ALL_MESSAGES: 'DELETE_ALL_MESSAGES',
-    TOGGLE_MESSAGES: 'TOGGLE_MESSAGES',
+    TOGGLE_MESSAGE: 'TOGGLE_MESSAGE',
     TOGGLE_ALL_MESSAGES: 'TOGGLE_ALL_MESSAGES',
     UPDATE_MESSAGE: 'UPDATE_MESSAGE',
 };
@@ -22,13 +25,14 @@ export interface AddMessageAction {
     payload: {
         text: string;
         id: string;
+        createdOn: Date;
     };
 }
 
-export interface DeleteMessagesAction {
-    type: typeof messageListActionTypes.DELETE_MESSAGES;
+export interface DeleteMessageAction {
+    type: typeof messageListActionTypes.DELETE_MESSAGE;
     payload: {
-        ids: Set<string>;
+        id: string;
     };
 }
 
@@ -38,12 +42,16 @@ export interface DeleteAllMessagesAction {
 
 export interface ToggleAllMessagesAction {
     type: typeof messageListActionTypes.TOGGLE_ALL_MESSAGES;
+    payload: {
+        readOn: Date;
+    };
 }
 
-export interface ToggleMessagesAction {
-    type: typeof messageListActionTypes.DELETE_MESSAGES;
+export interface ToggleMessageAction {
+    type: typeof messageListActionTypes.TOGGLE_MESSAGE;
     payload: {
-        ids: Set<string>;
+        id: string;
+        readOn: Date;
     };
 }
 
@@ -52,13 +60,14 @@ export interface UpdateMessageAction {
     payload: {
         id: string;
         text: string;
+        updatedOn: Date;
     };
 }
 
 export type MessageListAction =
     | AddMessageAction
-    | DeleteMessagesAction
+    | DeleteMessageAction
     | DeleteAllMessagesAction
-    | ToggleMessagesAction
+    | ToggleMessageAction
     | ToggleAllMessagesAction
     | UpdateMessageAction;

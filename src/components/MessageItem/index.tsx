@@ -3,22 +3,23 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-    deleteMessages,
-    toggleMessages,
+    deleteMessage,
+    toggleMessage,
     updateMessage,
 } from '../../redux/messageList/actions';
 import { Message } from '../../redux/messageList/types';
 import { RootState } from '../../redux/store';
+import MessageItemDetails from '../MessageItemDetails/';
 
 interface DispatchProps {
-    deleteMessages: typeof deleteMessages;
-    toggleMessages: typeof toggleMessages;
+    deleteMessage: typeof deleteMessage;
+    toggleMessage: typeof toggleMessage;
     updateMessage: typeof updateMessage;
 }
 
 const mapDispatchToProps = {
-    deleteMessages,
-    toggleMessages,
+    deleteMessage,
+    toggleMessage,
     updateMessage,
 };
 
@@ -33,6 +34,7 @@ type MessageItemProps = DispatchProps & StateProps & OwnProps;
 interface MessageItemState {
     typing: boolean;
     input: string;
+    showDetails: boolean;
 }
 
 class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
@@ -41,6 +43,7 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
         this.state = {
             typing: false,
             input: this.props.text,
+            showDetails: false,
         };
         this.resetState = this.resetState.bind(this);
         this.toggleRead = this.toggleRead.bind(this);
@@ -50,6 +53,7 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
         this.startTyping = this.startTyping.bind(this);
         this.dispatchUpdate = this.dispatchUpdate.bind(this);
         this.dispatchDelete = this.dispatchDelete.bind(this);
+        this.toggleDetails = this.toggleDetails.bind(this);
     }
 
     resetState(): void {
@@ -57,9 +61,7 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
     }
 
     toggleRead(): void {
-        const set: Set<string> = new Set<string>();
-        set.add(this.props.id);
-        this.props.toggleMessages(set);
+        this.props.toggleMessage(this.props.id);
     }
 
     handleKeyUp(e: React.KeyboardEvent<HTMLInputElement>): void {
@@ -100,9 +102,11 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
     }
 
     dispatchDelete(): void {
-        const set: Set<string> = new Set<string>();
-        set.add(this.props.id);
-        this.props.deleteMessages(set);
+        this.props.deleteMessage(this.props.id);
+    }
+
+    toggleDetails(): void {
+        this.setState({ ...this.state, showDetails: !this.state.showDetails });
     }
 
     render(): JSX.Element {
@@ -114,6 +118,7 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
                 checked={this.props.read}
             />
         );
+
         const updateBox = (
             <input
                 autoFocus
@@ -125,27 +130,66 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
                 onChange={this.handleTyping}
             />
         );
+
         const messageItemLabelClasses = classNames({
             'message-label': true,
             'messages-strikethrough': this.props.read,
         });
+
         const messageItemLabel = (
             <label onClick={this.startTyping} className={messageItemLabelClasses}>
                 {this.props.text}
             </label>
         );
+
+        const detailsButton = (
+            <button className="details-btn" onClick={this.toggleDetails}>
+                ...
+            </button>
+        );
+
         const deleteButton = (
             <button className="delete-btn" onClick={this.dispatchDelete}>
                 x
             </button>
         );
-        return (
-            <li>
-                {toggleCheckBox}
-                {this.state.typing ? updateBox : messageItemLabel}
-                {deleteButton}
-            </li>
-        );
+
+        if (this.state.typing === false) {
+            return (
+                <React.Fragment>
+                    <li>
+                        {toggleCheckBox}
+                        {messageItemLabel}
+                        {deleteButton}
+                        {detailsButton}
+                    </li>
+                    {this.state.showDetails && (
+                        <MessageItemDetails
+                            read={this.props.read}
+                            createdOn={this.props.createdOn}
+                            readOn={this.props.readOn}
+                            updatedOn={this.props.updatedOn}
+                        />
+                    )}
+                </React.Fragment>
+            );
+        } else {
+            return (
+                <li>
+                    {toggleCheckBox}
+                    {updateBox}
+                    {deleteButton}
+                </li>
+            );
+        }
+        // return (
+        //     <li>
+        //         {toggleCheckBox}
+        //         {this.state.typing ? updateBox : messageItemLabel}
+        //         {deleteButton}
+        //         {!this.state.typing && detailsButton}
+        //     </li>
+        // );
     }
 }
 

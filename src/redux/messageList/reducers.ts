@@ -2,26 +2,33 @@ import { v4 as uuid } from 'uuid';
 
 import {
     AddMessageAction,
-    DeleteMessagesAction,
+    DeleteMessageAction,
     Message,
     MessageListAction,
     messageListActionTypes,
     MessageListState,
-    ToggleMessagesAction,
+    ToggleMessageAction,
     UpdateMessageAction,
 } from './types';
 
+const now: Date = new Date();
 const initialState: MessageListState = {
     messages: [
         {
             text: 'This is a read message',
             read: true,
             id: uuid(),
+            createdOn: now,
+            readOn: undefined,
+            updatedOn: now,
         },
         {
             text: 'This is an unread message',
             read: false,
             id: uuid(),
+            createdOn: now,
+            readOn: undefined,
+            updatedOn: now,
         },
     ],
 };
@@ -32,21 +39,24 @@ export default (
 ): MessageListState => {
     switch (action.type) {
         case messageListActionTypes.ADD_MESSAGE: {
-            const { text, id } = (action as AddMessageAction).payload;
+            const { text, id, createdOn } = (action as AddMessageAction).payload;
             const newMessage = {
                 text: text,
                 read: false,
                 id: id,
+                createdOn: createdOn,
+                readOn: undefined,
+                updatedOn: createdOn,
             };
             return {
                 messages: [...state.messages, newMessage],
             };
         }
 
-        case messageListActionTypes.DELETE_MESSAGES: {
+        case messageListActionTypes.DELETE_MESSAGE: {
+            const { id } = (action as DeleteMessageAction).payload;
             const updatedMessages: Message[] = state.messages.filter(
-                message =>
-                    !(action as DeleteMessagesAction).payload.ids.has(message.id)
+                message => message.id !== id
             );
             return {
                 messages: updatedMessages,
@@ -59,10 +69,15 @@ export default (
             };
         }
 
-        case messageListActionTypes.TOGGLE_MESSAGES: {
+        case messageListActionTypes.TOGGLE_MESSAGE: {
             const updatedMessages: Message[] = state.messages.map(message => {
-                if ((action as ToggleMessagesAction).payload.ids.has(message.id)) {
-                    return { ...message, read: !message.read };
+                const { id, readOn } = (action as ToggleMessageAction).payload;
+                if (message.id === id) {
+                    if (message.read === true) {
+                        return { ...message, read: false, readOn: undefined };
+                    } else {
+                        return { ...message, read: true, readOn: readOn };
+                    }
                 } else {
                     return message;
                 }
@@ -100,10 +115,11 @@ export default (
 
         case messageListActionTypes.UPDATE_MESSAGE: {
             const updatedMessages: Message[] = [...state.messages];
-            const { id, text } = (action as UpdateMessageAction).payload;
+            const { id, text, updatedOn } = (action as UpdateMessageAction).payload;
             for (const message of updatedMessages) {
                 if (message.id === id) {
                     message.text = text;
+                    message.updatedOn = updatedOn;
                 }
             }
             return {
