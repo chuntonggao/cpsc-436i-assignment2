@@ -1,8 +1,7 @@
-import { v4 as uuid } from 'uuid';
-
 import {
     AddMessageAction,
     DeleteMessageAction,
+    InitMessageListAction,
     Message,
     MessageListAction,
     messageListActionTypes,
@@ -11,26 +10,8 @@ import {
     UpdateMessageAction,
 } from './types';
 
-const now: Date = new Date();
 const initialState: MessageListState = {
-    messages: [
-        {
-            text: 'This is a read message',
-            read: true,
-            id: uuid(),
-            createdOn: now,
-            readOn: undefined,
-            updatedOn: now,
-        },
-        {
-            text: 'This is an unread message',
-            read: false,
-            id: uuid(),
-            createdOn: now,
-            readOn: undefined,
-            updatedOn: now,
-        },
-    ],
+    messages: [],
 };
 
 export default (
@@ -66,6 +47,12 @@ export default (
         case messageListActionTypes.DELETE_ALL_MESSAGES: {
             return {
                 messages: [],
+            };
+        }
+
+        case messageListActionTypes.INIT_MESSAGE_LIST: {
+            return {
+                messages: (action as InitMessageListAction).payload.messages,
             };
         }
 

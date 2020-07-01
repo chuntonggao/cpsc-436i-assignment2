@@ -4,6 +4,8 @@ import {
     AddMessageAction,
     DeleteAllMessagesAction,
     DeleteMessageAction,
+    InitMessageListAction,
+    Message,
     messageListActionTypes,
     ToggleAllMessagesAction,
     ToggleMessageAction,
@@ -33,6 +35,20 @@ export const deleteMessage = (id: string): DeleteMessageAction => {
 export const deleteAllMessages = (): DeleteAllMessagesAction => {
     return {
         type: messageListActionTypes.DELETE_ALL_MESSAGES,
+    };
+};
+
+export const initMessageList = (
+    messages: Array<Omit<Message, 'id'> & { _id: Message['id'] }>
+): InitMessageListAction => {
+    const newMessages: Message[] = messages.map(message => {
+        return { ...message, id: message._id };
+    });
+    return {
+        type: messageListActionTypes.INIT_MESSAGE_LIST,
+        payload: {
+            messages: newMessages,
+        },
     };
 };
 

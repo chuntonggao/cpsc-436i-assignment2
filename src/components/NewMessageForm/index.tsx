@@ -1,8 +1,12 @@
+import { Spin } from 'antd';
+import axios from 'axios';
 import React from 'react';
 import { connect } from 'react-redux';
 
 import { addMessage, toggleAllMessages } from '../../redux/messageList/actions';
+import { Message } from '../../redux/messageList/types';
 import { RootState } from '../../redux/store';
+import { fetchAndSetMessageList } from '../../util';
 
 interface DispatchProps {
     addMessage: typeof addMessage;
@@ -14,9 +18,14 @@ const mapDispatchToProps: DispatchProps = {
     toggleAllMessages,
 };
 
-interface StateProps {}
+interface StateProps {
+    messages: Message[];
+}
 
-const mapStateToProps = null;
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => ({
+    messages: state.messageList.messages,
+});
 
 interface OwnProps {}
 
@@ -25,11 +34,13 @@ type NewMessageFormProps = DispatchProps & StateProps & OwnProps;
 interface NewMessageFormState {
     input: string;
     typing: boolean;
+    loading: boolean;
 }
 
 const initialState: NewMessageFormState = {
     input: '',
     typing: false,
+    loading: false,
 };
 
 class NewMessageForm extends React.Component<
@@ -56,10 +67,35 @@ class NewMessageForm extends React.Component<
         }
     }
 
-    createMessage(): void {
-        this.props.addMessage(this.state.input);
+    async createMessage(): Promise<void> {
+        this.setState({ loading: true });
+        const response = await axios.post('http://localhost:3300/messages', {
+            text: this.state.input,
+        });
+        if (response.status === 201) {
+            await fetchAndSetMessageList();
+        } else {
+            alert('request failed');
+        }
         this.setState(initialState);
     }
+
+    toggleAllMessages = async (): Promise<void> => {
+        this.setState({ loading: true });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const promises: Promise<any>[] = [];
+        for (const message of this.props.messages) {
+            promises.push(
+                axios.put(`http://localhost:3300/messages/${message.id}`, {
+                    updatedFields: { ...message, read: !message.read },
+                })
+            );
+        }
+        await Promise.all(promises);
+        await fetchAndSetMessageList();
+
+        this.setState({ loading: false });
+    };
 
     handleKeyUp(e: React.KeyboardEvent<HTMLInputElement>): void {
         if (e.key === 'Enter') {
@@ -81,7 +117,7 @@ class NewMessageForm extends React.Component<
             <input
                 id="toggle-all-btn"
                 type="checkbox"
-                onClick={this.props.toggleAllMessages}
+                onClick={this.toggleAllMessages}
             />
         );
         const newMessageForm = (
@@ -108,12 +144,14 @@ class NewMessageForm extends React.Component<
             </button>
         );
         return (
-            <React.Fragment>
-                {toggleAllButton}
-                {newMessageForm}
-                {clearFormButton}
-                {this.state.typing && createMessageButton}
-            </React.Fragment>
+            <Spin spinning={this.state.loading}>
+                <React.Fragment>
+                    {this.props.messages.length > 0 && toggleAllButton}
+                    {newMessageForm}
+                    {clearFormButton}
+                    {this.state.typing && createMessageButton}
+                </React.Fragment>
+            </Spin>
         );
     }
 }

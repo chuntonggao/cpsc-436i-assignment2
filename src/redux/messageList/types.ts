@@ -18,6 +18,7 @@ export const messageListActionTypes = {
     TOGGLE_MESSAGE: 'TOGGLE_MESSAGE',
     TOGGLE_ALL_MESSAGES: 'TOGGLE_ALL_MESSAGES',
     UPDATE_MESSAGE: 'UPDATE_MESSAGE',
+    INIT_MESSAGE_LIST: 'INIT_MESSAGE_LIST',
 };
 
 export interface AddMessageAction {
@@ -38,6 +39,11 @@ export interface DeleteMessageAction {
 
 export interface DeleteAllMessagesAction {
     type: typeof messageListActionTypes.DELETE_ALL_MESSAGES;
+}
+
+export interface InitMessageListAction {
+    type: typeof messageListActionTypes.INIT_MESSAGE_LIST;
+    payload: { messages: Message[] };
 }
 
 export interface ToggleAllMessagesAction {
@@ -70,4 +76,5 @@ export type MessageListAction =
     | DeleteAllMessagesAction
     | ToggleMessageAction
     | ToggleAllMessagesAction
-    | UpdateMessageAction;
+    | UpdateMessageAction
+    | InitMessageListAction;

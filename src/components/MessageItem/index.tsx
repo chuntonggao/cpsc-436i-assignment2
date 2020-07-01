@@ -1,3 +1,6 @@
+/* eslint-disable max-lines */
+import { Spin } from 'antd';
+import axios from 'axios';
 import classNames from 'classnames';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -9,6 +12,7 @@ import {
 } from '../../redux/messageList/actions';
 import { Message } from '../../redux/messageList/types';
 import { RootState } from '../../redux/store';
+import { fetchAndSetMessageList } from '../../util';
 import MessageItemDetails from '../MessageItemDetails/';
 
 interface DispatchProps {
@@ -35,6 +39,7 @@ interface MessageItemState {
     typing: boolean;
     input: string;
     showDetails: boolean;
+    loading: boolean;
 }
 
 class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
@@ -44,6 +49,7 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
             typing: false,
             input: this.props.text,
             showDetails: false,
+            loading: false,
         };
         this.resetState = this.resetState.bind(this);
         this.toggleRead = this.toggleRead.bind(this);
@@ -60,8 +66,18 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
         this.setState({ typing: false, input: this.props.text });
     }
 
-    toggleRead(): void {
-        this.props.toggleMessage(this.props.id);
+    async toggleRead(): Promise<void> {
+        this.setState({ loading: true });
+        const id = this.props.id;
+        const response = await axios.put(`http://localhost:3300/messages/${id}`, {
+            updatedFields: { ...this.props, read: !this.props.read },
+        });
+        if (response.status === 200) {
+            this.props.toggleMessage(this.props.id);
+        } else {
+            alert('request failed');
+        }
+        this.setState({ loading: false });
     }
 
     handleKeyUp(e: React.KeyboardEvent<HTMLInputElement>): void {
@@ -97,12 +113,31 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
         });
     }
 
-    dispatchUpdate(): void {
-        this.props.updateMessage({ id: this.props.id, text: this.state.input });
+    async dispatchUpdate(): Promise<void> {
+        this.setState({ loading: true });
+        const id = this.props.id;
+        const text = this.state.input;
+        const response = await axios.put(`http://localhost:3300/messages/${id}`, {
+            updatedFields: { ...this.props, text },
+        });
+        if (response.status === 200) {
+            await fetchAndSetMessageList();
+        } else {
+            alert('request failed');
+        }
+        this.setState({ loading: false });
     }
 
-    dispatchDelete(): void {
-        this.props.deleteMessage(this.props.id);
+    async dispatchDelete(): Promise<void> {
+        this.setState({ loading: true });
+        const id = this.props.id;
+        const response = await axios.delete(`http://localhost:3300/messages/${id}`);
+        if (response.status === 204) {
+            await fetchAndSetMessageList();
+        } else {
+            alert('request failed');
+        }
+        this.setState({ loading: false });
     }
 
     toggleDetails(): void {
@@ -156,40 +191,36 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
 
         if (this.state.typing === false) {
             return (
-                <React.Fragment>
-                    <li>
-                        {toggleCheckBox}
-                        {messageItemLabel}
-                        {deleteButton}
-                        {detailsButton}
-                    </li>
-                    {this.state.showDetails && (
-                        <MessageItemDetails
-                            read={this.props.read}
-                            createdOn={this.props.createdOn}
-                            readOn={this.props.readOn}
-                            updatedOn={this.props.updatedOn}
-                        />
-                    )}
-                </React.Fragment>
+                <Spin spinning={this.state.loading}>
+                    <React.Fragment>
+                        <li>
+                            {toggleCheckBox}
+                            {messageItemLabel}
+                            {deleteButton}
+                            {detailsButton}
+                        </li>
+                        {this.state.showDetails && (
+                            <MessageItemDetails
+                                read={this.props.read}
+                                createdOn={this.props.createdOn}
+                                readOn={this.props.readOn}
+                                updatedOn={this.props.updatedOn}
+                            />
+                        )}
+                    </React.Fragment>
+                </Spin>
             );
         } else {
             return (
-                <li>
-                    {toggleCheckBox}
-                    {updateBox}
-                    {deleteButton}
-                </li>
+                <Spin spinning={this.state.loading}>
+                    <li>
+                        {toggleCheckBox}
+                        {updateBox}
+                        {deleteButton}
+                    </li>
+                </Spin>
             );
         }
-        // return (
-        //     <li>
-        //         {toggleCheckBox}
-        //         {this.state.typing ? updateBox : messageItemLabel}
-        //         {deleteButton}
-        //         {!this.state.typing && detailsButton}
-        //     </li>
-        // );
     }
 }
 
