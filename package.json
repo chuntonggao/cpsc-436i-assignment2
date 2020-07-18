@@ -48,7 +48,7 @@
     "homepage": "https://chuntonggao.github.io/cpsc-436i-assignment2",
     "name": "message-list-no-hooks",
     "scripts": {
-        "build": "react-scripts build",
+        "build": "CI= react-scripts build",
         "check": "npm run stylelint && npm run prettier-check && npm run eslint-check && npm run tsc-check",
         "deploy": "gh-pages -d build",
         "eslint-check": "eslint --no-error-on-unmatched-pattern \"src/**/*.{ts,tsx}\"",
