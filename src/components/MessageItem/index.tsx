@@ -69,9 +69,12 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
     async toggleRead(): Promise<void> {
         this.setState({ loading: true });
         const id = this.props.id;
-        const response = await axios.put(`${process.env.API_URL}/messages/${id}`, {
-            updatedFields: { ...this.props, read: !this.props.read },
-        });
+        const response = await axios.put(
+            `${process.env.REACT_APP_API_URL}/messages/${id}`,
+            {
+                updatedFields: { ...this.props, read: !this.props.read },
+            }
+        );
         if (response.status === 200) {
             this.props.toggleMessage(this.props.id);
         } else {
@@ -117,9 +120,12 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
         this.setState({ loading: true });
         const id = this.props.id;
         const text = this.state.input;
-        const response = await axios.put(`${process.env.API_URL}/messages/${id}`, {
-            updatedFields: { ...this.props, text },
-        });
+        const response = await axios.put(
+            `${process.env.REACT_APP_API_URL}/messages/${id}`,
+            {
+                updatedFields: { ...this.props, text },
+            }
+        );
         if (response.status === 200) {
             await fetchAndSetMessageList();
         } else {
@@ -131,7 +137,9 @@ class MessageItem extends React.Component<MessageItemProps, MessageItemState> {
     async dispatchDelete(): Promise<void> {
         this.setState({ loading: true });
         const id = this.props.id;
-        const response = await axios.delete(`${process.env.API_URL}/messages/${id}`);
+        const response = await axios.delete(
+            `${process.env.REACT_APP_API_URL}/messages/${id}`
+        );
         if (response.status === 204) {
             await fetchAndSetMessageList();
         } else {

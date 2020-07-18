@@ -65,9 +65,12 @@ class MessageList extends React.Component<MessageListProps, MessageListState> {
         const promises: Promise<any>[] = [];
         for (const message of this.props.messages) {
             promises.push(
-                axios.put(`${process.env.API_URL}/messages/${message.id}`, {
-                    updatedFields: { ...message, read: !message.read },
-                })
+                axios.put(
+                    `${process.env.REACT_APP_API_URL}/messages/${message.id}`,
+                    {
+                        updatedFields: { ...message, read: !message.read },
+                    }
+                )
             );
         }
         console.log('toggle all');
@@ -84,7 +87,9 @@ class MessageList extends React.Component<MessageListProps, MessageListState> {
         const promises: Promise<any>[] = [];
         for (const message of this.props.messages) {
             promises.push(
-                axios.delete(`${process.env.API_URL}/messages/${message.id}`)
+                axios.delete(
+                    `${process.env.REACT_APP_API_URL}/messages/${message.id}`
+                )
             );
         }
         await Promise.all(promises);

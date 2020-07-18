@@ -5,7 +5,8 @@ import { Message } from './redux/messageList/types';
 import { store } from './redux/store';
 
 export const fetchAndSetMessageList = async (): Promise<void> => {
-    const response = await axios.get(`${process.env.API_URL}/messages`);
+    console.log(process.env.REACT_APP_API_URL);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/messages`);
     if (response.status === 200) {
         const messages: Array<Omit<Message, 'id'> & { _id: Message['id'] }> =
             response.data.messageList;

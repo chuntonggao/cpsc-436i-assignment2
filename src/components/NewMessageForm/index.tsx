@@ -69,9 +69,12 @@ class NewMessageForm extends React.Component<
 
     async createMessage(): Promise<void> {
         this.setState({ loading: true });
-        const response = await axios.post(`${process.env.API_URL}/messages`, {
-            text: this.state.input,
-        });
+        const response = await axios.post(
+            `${process.env.REACT_APP_API_URL}/messages`,
+            {
+                text: this.state.input,
+            }
+        );
         if (response.status === 201) {
             await fetchAndSetMessageList();
         } else {
@@ -86,9 +89,12 @@ class NewMessageForm extends React.Component<
         const promises: Promise<any>[] = [];
         for (const message of this.props.messages) {
             promises.push(
-                axios.put(`${process.env.API_URL}/messages/${message.id}`, {
-                    updatedFields: { ...message, read: !message.read },
-                })
+                axios.put(
+                    `${process.env.REACT_APP_API_URL}/messages/${message.id}`,
+                    {
+                        updatedFields: { ...message, read: !message.read },
+                    }
+                )
             );
         }
         await Promise.all(promises);
