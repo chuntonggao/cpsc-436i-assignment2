@@ -45,7 +45,6 @@
         "stylelint-config-recommended": "^3.0.0",
         "typescript": "^3.7.5"
     },
-    "homepage": "https://chuntonggao.github.io/cpsc-436i-assignment2",
     "name": "message-list-no-hooks",
     "scripts": {
         "build": "CI= react-scripts build",
